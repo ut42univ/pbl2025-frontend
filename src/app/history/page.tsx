@@ -3,7 +3,7 @@
 import { AuthGuard } from "@/components/auth/AuthGuard";
 import { AppLayout } from "@/components/layout/AppLayout";
 import { usePots } from "@/hooks/usePots";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -34,7 +34,7 @@ import { api } from "@/lib/api";
 import { SensorData, PotInfo } from "@/types";
 import { useSearchParams } from "next/navigation";
 
-export default function HistoryPage() {
+function HistoryPageContent() {
   const { pots, isLoading: potsLoading } = usePots();
   const [selectedPotId, setSelectedPotId] = useState<string>("all");
   const [selectedPeriod, setSelectedPeriod] = useState<number>(7);
@@ -436,5 +436,30 @@ export default function HistoryPage() {
         </div>
       </AppLayout>
     </AuthGuard>
+  );
+}
+
+export default function HistoryPage() {
+  return (
+    <Suspense
+      fallback={
+        <AuthGuard>
+          <AppLayout>
+            <div className="space-y-6 animate-pulse">
+              <div className="h-8 bg-gray-200 rounded w-1/3"></div>
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {[...Array(6)].map((_, i) => (
+                  <Card key={i} className="p-6">
+                    <div className="h-32 bg-gray-200 rounded"></div>
+                  </Card>
+                ))}
+              </div>
+            </div>
+          </AppLayout>
+        </AuthGuard>
+      }
+    >
+      <HistoryPageContent />
+    </Suspense>
   );
 }
