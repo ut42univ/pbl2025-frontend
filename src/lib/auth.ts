@@ -40,7 +40,9 @@ export const authOptions: NextAuthOptions = {
 
           // ユーザー認証
           const user = dummyUsers.find(
-            (u) => u.email === credentials.email && u.password === credentials.password
+            (u) =>
+              u.email === credentials.email &&
+              u.password === credentials.password
           );
 
           if (!user) {
