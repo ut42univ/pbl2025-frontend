@@ -16,36 +16,47 @@ export const authOptions: NextAuthOptions = {
         }
 
         try {
-          // ダミーAPIを使用
-          const response = await fetch(
-            `${process.env.NEXTAUTH_URL}/api/auth/login`,
+          // 直接認証ロジックを実行（内部API呼び出しを避ける）
+          const dummyUsers = [
             {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                email: credentials.email,
-                password: credentials.password,
-              }),
-            }
+              id: "1",
+              email: "admin@tomasapo.com",
+              password: "admin123",
+              name: "管理者",
+            },
+            {
+              id: "2",
+              email: "farmer@tomasapo.com",
+              password: "farmer123",
+              name: "農家太郎",
+            },
+            {
+              id: "3",
+              email: "demo@tomasapo.com",
+              password: "demo123",
+              name: "デモユーザー",
+            },
+          ];
+
+          // ユーザー認証
+          const user = dummyUsers.find(
+            (u) => u.email === credentials.email && u.password === credentials.password
           );
 
-          if (!response.ok) {
-            const errorData = await response.json();
-            console.error("Authentication failed:", errorData.message);
+          if (!user) {
+            console.error("Authentication failed: Invalid credentials");
             return null;
           }
 
-          const result = await response.json();
-          const user = result.user;
+          // アクセストークンの生成（ダミー）
+          const accessToken = `token_${user.id}_${Date.now()}`;
 
-          if (user) {
-            return {
-              id: user.id,
-              email: user.email,
-              name: user.name,
-              accessToken: result.accessToken,
-            };
-          }
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            accessToken: accessToken,
+          };
         } catch (error) {
           console.error("Authentication error:", error);
         }
@@ -74,4 +85,5 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
   },
   secret: process.env.NEXTAUTH_SECRET,
+  debug: process.env.NODE_ENV === "development",
 };
