@@ -31,3 +31,48 @@ export interface HistoricalData {
   soilMoisture: number;
   nitrogenLevel: number;
 }
+
+// 認証関連の型
+export interface User {
+  id: string;
+  email: string;
+  name: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface AuthResponse {
+  user: User;
+  accessToken: string;
+  refreshToken?: string;
+}
+
+export interface LoginCredentials {
+  email: string;
+  password: string;
+}
+
+export interface RegisterCredentials extends LoginCredentials {
+  name: string;
+  confirmPassword: string;
+}
+
+// API レスポンス関連の型
+export interface ApiResponse<T> {
+  data: T;
+  message?: string;
+  success: boolean;
+}
+
+export interface ApiError {
+  message: string;
+  statusCode: number;
+  details?: any;
+}
+
+// フォームの状態管理用
+export interface FormState {
+  isLoading: boolean;
+  error: string | null;
+  success: boolean;
+}
